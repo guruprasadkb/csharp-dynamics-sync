@@ -1,0 +1,186 @@
+version: "1"
+
+metadata:
+  title: "Dynamics 365 CRM Sync Engine - Scoring Rubric"
+  description: "Rubric for evaluating Lead .NET Developer with Dynamics 365 expertise"
+
+dimensions:
+  - name: "Architecture & Design"
+    weight: 0.25
+    description: "How well the candidate structures code, applies SOLID principles, and makes design decisions befitting a lead engineer"
+    anchors:
+      1:
+        description: "Dumps all logic into a single class with no separation of concerns"
+        examples:
+          - "All mapping, sync, and conflict logic in one file"
+          - "No dependency injection or interface usage"
+          - "Tightly coupled components"
+      2:
+        description: "Basic separation but inconsistent patterns"
+        examples:
+          - "Some classes separated but unclear responsibilities"
+          - "Mixes concerns within methods"
+          - "Partial use of provided interfaces"
+      3:
+        description: "Clean separation with proper DI and consistent patterns"
+        examples:
+          - "Implements all interfaces with clear single responsibilities"
+          - "Constructor injection for dependencies"
+          - "Consistent naming and organization"
+      4:
+        description: "Exemplary architecture showing lead-level judgment"
+        examples:
+          - "Strategic use of patterns (strategy for conflict, mapper for transforms)"
+          - "Error handling that respects failure boundaries"
+          - "Code structured for testability and extensibility without over-engineering"
+
+  - name: "AI Collaboration Quality"
+    weight: 0.20
+    description: "Quality of prompts and how effectively the candidate steers the AI for implementation"
+    anchors:
+      1:
+        description: "Vague prompts that delegate all decisions to AI"
+        examples:
+          - "'Build the sync engine' with no context"
+          - "No guidance on architecture or patterns"
+          - "Accepts whatever AI generates without direction"
+      2:
+        description: "Provides some context but lets AI make key design decisions"
+        examples:
+          - "Shares interfaces but doesn't specify approach"
+          - "Doesn't correct when AI takes a wrong architectural direction"
+      3:
+        description: "Provides clear context and guides AI on approach"
+        examples:
+          - "Shares relevant model files and test expectations"
+          - "Specifies which pattern to use for conflict resolution"
+          - "Breaks work into focused prompts per phase"
+      4:
+        description: "Expert AI collaboration — uses AI as a force multiplier"
+        examples:
+          - "Describes architecture up front, delegates implementation"
+          - "Uses AI for boilerplate mapping while making design calls personally"
+          - "Iteratively refines with targeted follow-up prompts"
+
+  - name: "Dynamics 365 Knowledge"
+    weight: 0.15
+    description: "Demonstrated understanding of Dynamics 365 entity patterns, conventions, and behaviors"
+    anchors:
+      1:
+        description: "No recognition of Dynamics patterns — treats as generic data models"
+        examples:
+          - "Ignores StateCode/StatusCode semantics"
+          - "Doesn't understand VersionNumber concurrency"
+      2:
+        description: "Basic awareness but gaps in understanding"
+        examples:
+          - "Maps status fields but doesn't handle the state/status relationship correctly"
+          - "Ignores optimistic concurrency in updates"
+      3:
+        description: "Solid understanding of Dynamics entity patterns"
+        examples:
+          - "Correctly handles StateCode + StatusCode pairing"
+          - "Uses VersionNumber for optimistic concurrency"
+          - "Understands lookup fields (ParentCustomerId)"
+      4:
+        description: "Deep expertise — naturally uses Dynamics idioms"
+        examples:
+          - "Adds defensive checks matching real Dynamics behavior"
+          - "Understands that ModifiedOn is platform-managed"
+          - "Handles the dual-status model without needing the mapping table"
+
+  - name: "AI Output Evaluation"
+    weight: 0.15
+    description: "How critically the candidate reviews and refines AI-generated code"
+    anchors:
+      1:
+        description: "Blindly accepts all AI output"
+        examples:
+          - "Applies AI suggestions without reading the code"
+          - "Doesn't catch incorrect mapping logic"
+      2:
+        description: "Minimal review — catches obvious errors only"
+        examples:
+          - "Fixes compile errors but not logic bugs"
+          - "Doesn't verify mapping correctness against the spec"
+      3:
+        description: "Reviews AI output and catches mapping/logic issues"
+        examples:
+          - "Verifies field mappings against the README table"
+          - "Catches incorrect status mapping or name splitting"
+      4:
+        description: "Thorough review with improvements"
+        examples:
+          - "Catches edge cases AI missed (single name, null fields)"
+          - "Improves AI's implementation with better error handling"
+          - "Refactors AI code for consistency with the rest of the codebase"
+
+  - name: "Verification Discipline"
+    weight: 0.10
+    description: "Use of tests to drive implementation and verify correctness"
+    anchors:
+      1:
+        description: "Writes all code then runs tests once at the end"
+      2:
+        description: "Runs tests occasionally but not strategically"
+      3:
+        description: "Runs phase-specific tests after each implementation phase"
+        examples:
+          - "Uses --filter to run Phase1 tests first"
+          - "Iterates on failures before moving to next phase"
+      4:
+        description: "Test-driven approach — runs tests frequently and uses output to guide implementation"
+        examples:
+          - "Reads test code first to understand requirements"
+          - "Runs specific tests to validate each piece"
+
+  - name: "Code Quality"
+    weight: 0.10
+    description: "Quality of the C# code produced"
+    anchors:
+      1:
+        description: "Code compiles but is messy or fragile"
+        examples:
+          - "Magic strings/numbers everywhere"
+          - "No null checks where needed"
+          - "Inconsistent naming"
+      2:
+        description: "Functional but not clean"
+        examples:
+          - "Works but has code smells"
+          - "Inconsistent patterns across files"
+      3:
+        description: "Clean, idiomatic C# with proper patterns"
+        examples:
+          - "Good use of nullable reference types"
+          - "Consistent style and naming"
+          - "Appropriate exception handling"
+      4:
+        description: "Production-quality code"
+        examples:
+          - "Defensive coding without over-engineering"
+          - "Clear variable names and method signatures"
+          - "Appropriate use of modern C# features"
+
+  - name: "Communication"
+    weight: 0.05
+    description: "Clarity of explanations in AI conversations and code comments"
+    anchors:
+      1:
+        description: "No explanations or rationale for decisions"
+      2:
+        description: "Minimal communication"
+      3:
+        description: "Clear explanations of approach and decisions"
+      4:
+        description: "Articulates trade-offs and design rationale"
+
+success_criteria:
+  - "Phase 1 tests pass (8 tests) — minimum viable"
+  - "Phase 2 tests pass (5 tests) — expected for this level"
+  - "Phase 3 tests pass (4 tests) — strong candidate"
+  - "Phase 4 tests pass (3 tests) — exceptional candidate"
+  - "Code compiles without errors"
+  - "No pre-built files are modified"
+
+passing_score: 0.70

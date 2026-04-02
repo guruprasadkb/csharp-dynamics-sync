@@ -1,0 +1,101 @@
+version: "1"
+
+metadata:
+  title: "Dynamics 365 CRM Migration Sync Engine"
+  description: "Build a sync engine that maps and migrates data from a legacy CRM to Dynamics 365, handling conflict resolution, event-driven processing, and caching"
+  scenario: build_feature
+  language: csharp
+  difficulty: hard
+  estimated_time_minutes: 60
+  tags:
+    - csharp
+    - dotnet
+    - dynamics-365
+    - crm
+    - data-sync
+    - enterprise
+    - architecture
+
+environment:
+  base_image: "mcr.microsoft.com/dotnet/sdk:8.0"
+  repo:
+    url: ""
+    branch: main
+    shallow: true
+  setup_commands:
+    - "dotnet restore"
+  build_commands:
+    - "dotnet build --no-restore"
+  env_vars:
+    DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+
+workspace:
+  open_files:
+    - path: README.md
+      focus: true
+    - path: src/CrmSync/Interfaces/IEntityMapper.cs
+      focus: false
+    - path: src/CrmSync/Interfaces/ISyncService.cs
+      focus: false
+    - path: src/CrmSync/Models/Dynamics/Contact.cs
+      focus: false
+    - path: src/CrmSync/Models/Legacy/LegacyCustomer.cs
+      focus: false
+    - path: tests/CrmSync.Tests/Phase1_MappingTests.cs
+      focus: false
+
+  terminal:
+    enabled: true
+    height: 35
+    working_directory: /workspace
+    initial_commands:
+      - "echo '================================================'"
+      - "echo 'Dynamics 365 CRM Migration Sync Engine'"
+      - "echo 'Build Feature Challenge — 60 Minutes'"
+      - "echo '================================================'"
+      - "echo ''"
+      - "echo 'Running tests to see what needs to be implemented...'"
+      - "echo ''"
+      - "dotnet test --verbosity normal 2>&1 | tail -50"
+
+agent:
+  enabled: true
+  provider: anthropic
+  model: claude-sonnet-4-20250514
+  leash: moderate
+  can_use_browser: false
+  can_write_to_disk: true
+
+challenge:
+  prompt: |
+    ## Dynamics 365 CRM Migration Sync Engine
+
+    Contoso Financial Services is migrating from their legacy CRM ("LegacyPro") to
+    Microsoft Dynamics 365. Build the real-time sync engine that bridges the two
+    systems during the parallel-run period.
+
+    The Dynamics 365 entity schemas and legacy schemas are pre-defined in
+    `src/CrmSync/Models/`. Interfaces are in `src/CrmSync/Interfaces/`.
+    Implement your services in `src/CrmSync/Services/`.
+
+    Run `dotnet test --filter "FullyQualifiedName~Phase1"` to start with Phase 1.
+
+    See README.md for full details, mapping rules, and phase descriptions.
+
+scoring:
+  rubric: dynamics-crm-sync
+  dimensions:
+    - name: "Architecture & Design"
+      weight: 0.25
+    - name: "AI Collaboration Quality"
+      weight: 0.20
+    - name: "Dynamics 365 Knowledge"
+      weight: 0.15
+    - name: "AI Output Evaluation"
+      weight: 0.15
+    - name: "Verification Discipline"
+      weight: 0.10
+    - name: "Code Quality"
+      weight: 0.10
+    - name: "Communication"
+      weight: 0.05
