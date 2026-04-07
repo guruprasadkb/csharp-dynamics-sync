@@ -8,6 +8,8 @@ dimensions:
   - name: "Architecture & Design"
     weight: 0.25
     description: "How well the candidate structures code, applies SOLID principles, and makes design decisions befitting a lead engineer"
+    weight: 0.20
+    description: "How well the candidate structures code, applies SOLID principles, and makes design decisions"
     anchors:
       1:
         description: "Dumps all logic into a single class with no separation of concerns"
@@ -35,7 +37,7 @@ dimensions:
           - "Code structured for testability and extensibility without over-engineering"
 
   - name: "AI Collaboration Quality"
-    weight: 0.20
+    weight: 0.10
     description: "Quality of prompts and how effectively the candidate steers the AI for implementation"
     anchors:
       1:
@@ -63,31 +65,33 @@ dimensions:
           - "Iteratively refines with targeted follow-up prompts"
 
   - name: "Dynamics 365 Knowledge"
-    weight: 0.15
-    description: "Demonstrated understanding of Dynamics 365 entity patterns, conventions, and behaviors"
+    weight: 0.25
+    description: "Expertise in Dynamics-specific technical components (Plugins, PCF) and platform conventions"
     anchors:
       1:
         description: "No recognition of Dynamics patterns — treats as generic data models"
         examples:
           - "Ignores StateCode/StatusCode semantics"
-          - "Doesn't understand VersionNumber concurrency"
+          - "Doesn't understand Plugin context or Organization Service"
+          - "Fails to implement most basic PCF logic"
       2:
-        description: "Basic awareness but gaps in understanding"
+        description: "Basic awareness but gaps in implementation"
         examples:
-          - "Maps status fields but doesn't handle the state/status relationship correctly"
-          - "Ignores optimistic concurrency in updates"
+          - "Implements Plugin but misses InputParameters (Target) or Stage check"
+          - "PCF logic is partially correct but ignores timezone/UTC considerations"
+          - "Uses generic repo instead of OrganizationService in Plugin"
       3:
-        description: "Solid understanding of Dynamics entity patterns"
+        description: "Solid implementation of Dynamics components"
         examples:
-          - "Correctly handles StateCode + StatusCode pairing"
-          - "Uses VersionNumber for optimistic concurrency"
-          - "Understands lookup fields (ParentCustomerId)"
+          - "Correctly implements AccountLinkPlugin using IPluginExecutionContext"
+          - "Uses OrganizationService for updates within the Plugin"
+          - "PCF logic correctly handles nulls and today's date comparison"
       4:
-        description: "Deep expertise — naturally uses Dynamics idioms"
+        description: "Deep expertise — handles complex platform scenarios"
         examples:
-          - "Adds defensive checks matching real Dynamics behavior"
-          - "Understands that ModifiedOn is platform-managed"
-          - "Handles the dual-status model without needing the mapping table"
+          - "Handles concurrency (VersionNumber) and defensive checks in Plugin"
+          - "PCF implementation is robust, clean, and handles UTC edge cases"
+          - "Understands the Post-Operation stage vs Pre-Operation trade-offs"
 
   - name: "AI Output Evaluation"
     weight: 0.15
@@ -135,8 +139,8 @@ dimensions:
           - "Runs specific tests to validate each piece"
 
   - name: "Code Quality"
-    weight: 0.10
-    description: "Quality of the C# code produced"
+    weight: 0.15
+    description: "Quality of the C# and TypeScript code produced"
     anchors:
       1:
         description: "Code compiles but is messy or fragile"
@@ -176,10 +180,10 @@ dimensions:
         description: "Articulates trade-offs and design rationale"
 
 success_criteria:
-  - "Phase 1 tests pass (8 tests) — minimum viable"
-  - "Phase 2 tests pass (5 tests) — expected for this level"
-  - "Phase 3 tests pass (4 tests) — strong candidate"
-  - "Phase 4 tests pass (3 tests) — exceptional candidate"
+  - "Phase 1 tests pass (8 tests) — Mapping & Sync"
+  - "Phase 2 tests pass (5 tests) — Conflict Resolution"
+  - "Phase 3 tests pass — Dynamics Plugin implementation"
+  - "Phase 5 logic implemented — PCF component"
   - "Code compiles without errors"
   - "No pre-built files are modified"
 

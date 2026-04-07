@@ -146,36 +146,28 @@ Use the `ConflictStrategy` (passed to `SyncService` constructor) to resolve:
 
 ---
 
-## Phase 3: Event-Driven Processing (~12 min)
+## Phase 3: Dynamics 365 Plugin Implementation (~15 min)
 
-Publish domain events after sync operations and implement an auto-link event handler.
+Instead of a generic event bus, Contoso wants to use **Dynamics 365 Plugins** to handle post-sync logic directly within the CRM execution pipeline.
 
-### Events to Publish
+### The Task: Account Auto-Link Plugin
 
-After a successful **create** or **update**, publish to the `IMessageBus`:
+Implement a class `AccountLinkPlugin` in `CrmSync.Services.Plugins` that implements the `IPlugin` interface.
 
-| Entity | Topic |
-|---|---|
-| Contact | `"contact.synced"` |
-| Account | `"account.synced"` |
-| Opportunity | `"opportunity.synced"` |
+**Plugin Logic:**
+1.  The plugin is intended to run in the **Post-Operation** stage of an `Account` sync.
+2.  Retrieve the `IPluginExecutionContext` from the `IServiceProvider`.
+3.  Retrieve the `IOrganizationService` from the `IServiceProvider`.
+4.  The `InputParameters` contains the synced `Account` entity (key: `"Target"`).
+5.  If the `Account.PrimaryContactRef` is present (not null/empty):
+    -   Search for a `Contact` record where `Crm_LegacyId` matches the `PrimaryContactRef`.
+    -   If found, update the `Account.PrimaryContactId` to point to that Contact's GUID.
+    -   Important: Use the `IOrganizationService` to perform the update.
 
-The message object should include at minimum: the entity ID, legacy ID, and operation type. Use a record, anonymous type, or class -- your choice.
+### Versioning & Concurrency in Plugins
+-   Just like the sync service, ensure you respect the `VersionNumber` if you fetch and update records.
 
-**Do not publish events for skipped or failed operations.**
-
-### Auto-Link Handler
-
-When a company (`LegacyCompany`) has a `PrimaryContactRef`, after syncing the company, the corresponding Account's `PrimaryContactId` should be set to the Contact that matches that legacy ID.
-
-Implement this as an event handler subscribed to `"account.synced"`:
-1. Look up the Account by ID
-2. Look up the Contact by `Crm_LegacyId` matching the original `PrimaryContactRef`
-3. If found, set `Account.PrimaryContactId` and update the Account
-
-The auto-link test calls `bus.ProcessPendingAsync()` to trigger handlers.
-
-**Tests to pass:** `Phase3_EventTests` (4 tests)
+**Tests to pass:** `Phase3_PluginTests` (4 tests)
 
 ---
 
@@ -183,20 +175,30 @@ The auto-link test calls `bus.ProcessPendingAsync()` to trigger handlers.
 
 ### InMemoryCacheProvider
 
-Implement `ICacheProvider` with an in-memory dictionary:
-- `SetAsync`: Store value with optional TTL
-- `GetAsync`: Return value if present (and not expired)
-- `RemoveAsync`: Delete entry
-- `ExistsAsync`: Check presence
+Implement `ICacheProvider` with an in-memory dictionary.
 
 ### Batch Sync
 
-`SyncCustomerBatchAsync` (and the other batch methods) should:
-- Process all records (sequentially or in parallel)
-- Isolate failures: one bad record must not prevent others from syncing
-- Return an aggregate `BatchResult` with accurate counts
+`SyncCustomerBatchAsync` (and other batch methods) should process all records with error isolation.
 
 **Tests to pass:** `Phase4_CacheTests` (3 tests)
+
+---
+
+## Phase 5: D365 UI Personalization (PCF) (~10 min)
+
+The Dynamics 365 business users want a visual indication of the sync status directly on the form. Contoso uses a **Power Apps Component Framework (PCF)** control for this.
+
+### The Task: Sync Status Logic
+
+Implement the `getSyncStatusMessage` logic in `src/CrmSync/PCF/SyncStatusControl/index.ts`.
+
+**Rules:**
+1.  If the input `lastSynced` date is **null**, return `"Not Synced"`.
+2.  If the input `lastSynced` date is from **today** (same UTC date), return `"Synced recently"`.
+3.  Otherwise, return `"Sync Pending Update"`.
+
+**Evaluation:** This phase is evaluated via manual code review in the rubric.
 
 ---
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<manifest>
+  <control namespace="Contoso.Controls" constructor="SyncStatusControl" version="1.0.0" display-name-key="SyncStatusControl_Display_Key" description-key="SyncStatusControl_Desc_Key" control-type="standard">
+    <property name="lastSyncedOn" display-name-key="LastSyncedOn_Display_Key" description-key="LastSyncedOn_Desc_Key" of-type="DateAndTime" usage="bound" required="true" />
+    <resources>
+      <code path="index.ts" order="1"/>
+    </resources>
+  </control>
+</manifest>
